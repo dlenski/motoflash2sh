@@ -1,6 +1,7 @@
 # motoflash2sh
 
 This script converts Motorola's Android system images (containing a `flashfile.xml`) to a shell script.
+([Jeroen Bart's blog has a nice step-by-step explanation of these files.](http://www.forceflow.be/2016/06/29/flashing-system-images-on-moto-x-play/))
 
 ## Install
 
