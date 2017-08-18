@@ -67,11 +67,11 @@ def main():
         assert step.tag == 'step'
         op = step.get('operation')
         if op=='flash':
-            vars = 'partition', 'filename',
+            vars = 'operation', 'partition', 'filename',
         elif op=='erase':
-            vars = 'partition',
+            vars = 'operation', 'partition',
         elif op in ('getvar','oem'):
-            vars = 'operation',
+            vars = 'operation', 'var'
         else:
             args.output.write('\n# %02d: skipping unknown operation %r:\n%s\n\n' % (nn, op, commentify(step)))
             op = None
@@ -80,9 +80,6 @@ def main():
             if args.verbose:
                 args.output.write(commentify(step, '# %02d: ' % nn) + '\n')
             args.output.write('fastboot %s || exit 1\n' % ' '.join(step.get(v) for v in vars))
-
-    print("Wrote shell script with %d fastboot steps to %s" % (len(steps), args.output.name),
-          file=sys.stderr)
 
     print("Wrote shell script with %d fastboot steps to %s" % (len(steps), args.output.name),
           file=sys.stderr)
