@@ -46,6 +46,7 @@ setup(name="motoflash2sh",
       author_email="dlenski@gmail.com",
       license='GPL v3 or later',
       url="https://github.com/dlenski/motoflash2sh",
-      py_modules = ['motoflash2sh'],
+      build_requires=[ 'requests>=2.0' ],
+      py_modules=[ 'motoflash2sh' ],
       entry_points={ 'console_scripts': [ 'motoflash2sh=motoflash2sh:main' ] }
       )
