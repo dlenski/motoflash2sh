@@ -1,12 +1,14 @@
+#!/usr/bin/env python3
 import argparse
 import sys
 from os import path
 from textwrap import indent
 from xml.etree import ElementTree
-from collections import OrderedDict as odict
 
 def commentify(x, prefix='# '):
-    return indent(ElementTree.tostring(x).strip().decode(), prefix)
+    if isinstance(x, (ElementTree.ElementTree, ElementTree.Element)):
+        x = ElementTree.tostring(x).strip().decode()
+    return indent(x, prefix)
 
 def parse_args(args=None):
     p = argparse.ArgumentParser(description="Converts Motorola's flashfile.xml format to a [ba]sh script of fastboot commands")
@@ -48,20 +50,19 @@ def main():
         args.output.write('# WARNING: no <steps> found\n')
         steps = ()
 
-    if args.verify:
-        md5sums = odict()
-        sha1sums = odict()
-        for step in steps.getchildren():
-            assert step.tag == 'step'
-            if 'MD5' in step.keys() and 'filename' in step.keys():
-                md5sums[step.get('filename')] = step.get('MD5')
-            elif 'SHA1' in step.keys() and 'filename' in step.keys():
-                sha1sums[step.get('filename')] = step.get('SHA1')
+    md5sums = {}
+    sha1sums = {}
+    for step in steps.getchildren():
+        assert step.tag == 'step'
+        if 'MD5' in step.keys() and 'filename' in step.keys():
+            md5sums[step.get('filename')] = step.get('MD5')
+        elif 'SHA1' in step.keys() and 'filename' in step.keys():
+            sha1sums[step.get('filename')] = step.get('SHA1')
 
-        if md5sums:
-            args.output.write('md5sum --check <<EOF || exit 1\n' + ''.join('{1} *{0}\n'.format(*p) for p in md5sums.items()) + 'EOF\n\n')
-        if sha1sums:
-            args.output.write('sha1sum --check <<EOF || exit 1\n' + ''.join('{1} *{0}\n'.format(*p) for p in sha1sums.items()) + 'EOF\n\n')
+    for checker, checksums in (('md5sum', md5sums), ('sha1sum', sha1sums)):
+        if checksums:
+            checksums = checker + ' --check <<EOF || exit 1\n' + ''.join('{1} *{0}\n'.format(*p) for p in checksums.items()) + 'EOF'
+            args.output.write((checksums if args.verify else commentify(checksums)) + '\n\n')
 
     for nn, step in enumerate(steps.getchildren()):
         assert step.tag == 'step'
