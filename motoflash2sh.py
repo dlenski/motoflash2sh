@@ -52,7 +52,7 @@ def main():
 
     md5sums = {}
     sha1sums = {}
-    for step in steps.getchildren():
+    for step in steps:
         assert step.tag == 'step'
         if 'MD5' in step.keys() and 'filename' in step.keys():
             md5sums[step.get('filename')] = step.get('MD5')
@@ -64,7 +64,7 @@ def main():
             checksums = checker + ' --check <<EOF || exit 1\n' + ''.join('{1} *{0}\n'.format(*p) for p in checksums.items()) + 'EOF'
             args.output.write((checksums if args.verify else commentify(checksums)) + '\n\n')
 
-    for nn, step in enumerate(steps.getchildren()):
+    for nn, step in enumerate(steps):
         assert step.tag == 'step'
         op = step.get('operation')
         if op=='flash':
