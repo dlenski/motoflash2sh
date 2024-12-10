@@ -8,7 +8,7 @@ This script converts Motorola's Android system images (containing a `flashfile.x
 Use Python 3 `pip` (usually named `pip3`):
 
 ```sh
-$ pip3 install https://github.com/dlenski/motoflash2sh/archive/v0.1.zip     # tagged version
+$ pip3 install https://github.com/dlenski/motoflash2sh/archive/v0.4.zip     # tagged version
 $ pip3 install https://github.com/dlenski/motoflash2sh/archive/master.zip   # latest commit
 ```
 
